@@ -20,6 +20,7 @@ const scores = {
   win: 6,
 };
 
+
 function evalInput(arg: string) {
   switch (arg) {
     case "A":
@@ -54,16 +55,15 @@ function jokenpo(opponent: string, mine: string) {
 }
 
 let sum = 0;
-
 unparsedValues.forEach((item) => {
-  const splitedItem = item.split(" ");
-  const mineShape = evalInput(splitedItem[0]);
-  const opponentsShape = evalInput(splitedItem[1]);
+  const [mineShape, opponentsShape] = item.split(" ");
 
-  const resultsOfTheMatch = jokenpo(mineShape, opponentsShape);
+  const resultsOfTheMatch = jokenpo(
+    evalInput(mineShape),
+    evalInput(opponentsShape)
+  );
 
-  const shapeUsed = resultsOfTheMatch[0];
-  const matchResult = resultsOfTheMatch[1];
+  const [shapeUsed, matchResult] = resultsOfTheMatch;
 
   const totalPointsOfTheMatch = shapeValues[shapeUsed] + scores[matchResult];
 
