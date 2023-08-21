@@ -4,20 +4,21 @@ import { resolve } from "node:path";
 const filePath = resolve(__dirname, "input.txt");
 const file = readFileSync(filePath, "utf-8");
 
-const unparsedValues = file.split(/\n\s*/);
+const unparsedValues = file.trim().split("\n");
+
+const start = performance.now();
 
 const shapeValues = {
-  'rock': 1,
-  'paper': 2,
-  'scissors': 3,
+  rock: 1,
+  paper: 2,
+  scissors: 3,
 };
 
 const scores = {
-  'lose': 0,
-  'draw': 3,
-  'win': 6,
+  lose: 0,
+  draw: 3,
+  win: 6,
 };
-
 
 function evalInput(arg: string) {
   switch (arg) {
@@ -39,74 +40,35 @@ function evalInput(arg: string) {
   }
 }
 
-function jokenpo(mine: string, opponent: string) {
-  if (mine === opponent) return `${mine} draw`;
+function jokenpo(opponent: string, mine: string) {
+  if (mine === opponent) return [`${mine}`, "draw"];
 
-  
-  if(mine == 'rock' && opponent == 'scissors')  return `${mine} win`;
-  if(mine == 'scissors' && opponent == 'rock')  return `${mine} lose`;
-  
-  
-  if(mine == 'scissors' && opponent == 'paper')  return `${mine} win`;
-  if(mine == 'paper' && opponent == 'scissors')  return `${mine} lose`;
-  
-  
-  if(mine == 'paper' && opponent == 'rock')  return `${mine} win`;
-  if(mine == 'rock' && opponent == 'paper')  return `${mine} lose`;
+  if (mine == "rock" && opponent == "scissors") return [`${mine}`, "win"];
+  if (mine == "scissors" && opponent == "rock") return [`${mine}`, "lose"];
 
+  if (mine == "scissors" && opponent == "paper") return [`${mine}`, "win"];
+  if (mine == "paper" && opponent == "scissors") return [`${mine}`, "lose"];
 
-
-  // switch (mine && opponent) {
-  //   case "rock" && "scissors":     
-  //     return `${mine} win`;
-  //   case "rock" && "paper":
-  //     return `${mine} lose`;
-  //   case "paper" && "scissors":
-  //     return `${mine} lose`;
-
-  //   case "scissors" && "rock":
-  //     return `${mine} lose`;
-  //   case "paper" && "rock":
-  //     return `${mine} win`;
-  //   case "scissors" && "paper":
-  //     return `${mine} win`;
-    
-  //     default:
-  //     break;
-  // }
+  if (mine == "paper" && opponent == "rock") return [`${mine}`, "win"];
+  if (mine == "rock" && opponent == "paper") return [`${mine}`, "lose"];
 }
 
-function resolveMatch(arr: Array<string>) {
-  return arr.map((item) => {
-    const splitedItem = item.split(" ");
-    const mineShape = evalInput(splitedItem[0]);
-    const opponentsShape = evalInput(splitedItem[1]);
+let sum = 0;
 
-    return jokenpo(mineShape, opponentsShape)
-  });
-}
+unparsedValues.forEach((item) => {
+  const splitedItem = item.split(" ");
+  const mineShape = evalInput(splitedItem[0]);
+  const opponentsShape = evalInput(splitedItem[1]);
 
-const matchResolved = resolveMatch(unparsedValues);
+  const resultsOfTheMatch = jokenpo(mineShape, opponentsShape);
 
-const result = matchResolved.map((prev) => {
-  const array = prev.split(' ')
-  const shapeUsed = array[0]
-  const matchResult = array[1]    
+  const shapeUsed = resultsOfTheMatch[0];
+  const matchResult = resultsOfTheMatch[1];
 
-  const tot = scores[matchResult] + shapeValues[shapeUsed]  
-  
+  const totalPointsOfTheMatch = shapeValues[shapeUsed] + scores[matchResult];
 
-  
+  sum += totalPointsOfTheMatch;
+});
 
-  return tot
-})
-
-const totalResult = result.reduce((prev, curr) => {   
-  console.log(prev)
-  console.log(curr)
-  return prev+curr
-}, 0)
-
-console.log(totalResult)
-
-
+console.log(sum);
+console.log("time", performance.now() - start);
